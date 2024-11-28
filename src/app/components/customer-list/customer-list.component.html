@@ -1,0 +1,16 @@
+<div>
+  <h2>Customer List</h2>
+  <form (ngSubmit)="saveCustomer()">
+    <input [(ngModel)]="newCustomer.companyName" name="companyName" placeholder="Company Name" required />
+    <input [(ngModel)]="newCustomer.companySize" name="companySize" type="number" placeholder="Company Size" required />
+    <button type="submit">{{ newCustomer.id ? 'Update' : 'Create' }} Customer</button>
+  </form>
+
+  <ul>
+    <li *ngFor="let customer of customers">
+      <span>{{ customer.companyName }} - {{ customer.companySize }}</span>
+      <button (click)="editCustomer(customer)">Edit</button>
+      <button (click)="deleteCustomer(customer.id)">Delete</button>
+    </li>
+  </ul>
+</div>
