@@ -1,11 +1,5 @@
-export class Customer {
-  id: number;
+export interface Customer {
+  customerId: string;
   companyName: string;
   companySize: number;
-
-  constructor(id: number, companyName: string, companySize: number) {
-    this.id = id;
-    this.companyName = companyName;
-    this.companySize = companySize;
-  }
 }

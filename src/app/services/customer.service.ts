@@ -7,28 +7,22 @@ import { Customer } from '../models/customer.model';
   providedIn: 'root',
 })
 export class CustomerService {
-
-  private apiUrl = 'http://api.example.com/customers';
-
-  constructor(private http: HttpClient) { }
-
-  createCustomer(customer: Customer): Observable<Customer> {
-    return this.http.post<Customer>(`${this.apiUrl}/create`, customer);
-  }
+  private apiUrl = 'http://localhost:5000/api/Customers';
+  constructor(private http: HttpClient) {}
 
   getCustomers(): Observable<Customer[]> {
     return this.http.get<Customer[]>(this.apiUrl);
   }
 
-  addCustomer(customer: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, customer);
+  addCustomer(customer: Customer): Observable<Customer> {
+    return this.http.post<Customer>(this.apiUrl, customer);
   }
 
-  updateCustomer(id: number, customer: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, customer);
+  updateCustomer(customerId: string, customer: Customer): Observable<Customer> {
+    return this.http.put<Customer>(`${this.apiUrl}/${customerId}`, customer);
   }
 
-  deleteCustomer(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  deleteCustomer(customerId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${customerId}`);
   }
 }

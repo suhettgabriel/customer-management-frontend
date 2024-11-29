@@ -5,11 +5,15 @@ import { Customer } from '../../models/customer.model';
 @Component({
   selector: 'app-customer-list',
   templateUrl: './customer-list.component.html',
-  styleUrls: ['./customer-list.component.css'],
+  styleUrls: ['./customer-list.component.scss'],
 })
+
 export class CustomerListComponent implements OnInit {
   customers: Customer[] = [];
-  newCustomer: Customer = { id: 0, companyName: '', companySize: 1 };
+  newCustomer: Customer = { customerId: '', companyName: '', companySize: 1 };
+  editingCustomerId: string | null = null;
+  showDeleteModal: boolean = false;
+  customerToDelete: string | null = null;
 
   constructor(private customerService: CustomerService) {}
 
@@ -17,42 +21,62 @@ export class CustomerListComponent implements OnInit {
     this.loadCustomers();
   }
 
-  // Carregar todos os clientes
   loadCustomers(): void {
     this.customerService.getCustomers().subscribe((data) => {
       this.customers = data;
     });
   }
 
-  // Criar ou atualizar cliente
   saveCustomer(): void {
-    if (this.newCustomer.id) {
-      this.customerService.updateCustomer(this.newCustomer.id, this.newCustomer).subscribe(() => {
-        this.loadCustomers();
-        this.resetForm();
-      });
+    if (this.newCustomer.customerId) {
+      this.customerService
+        .updateCustomer(this.newCustomer.customerId, this.newCustomer)
+        .subscribe(() => {
+          this.loadCustomers();
+          this.resetForm();
+        });
     } else {
-      this.customerService.createCustomer(this.newCustomer).subscribe(() => {
+      this.customerService.addCustomer(this.newCustomer).subscribe(() => {
         this.loadCustomers();
         this.resetForm();
       });
     }
   }
 
-  // Deletar cliente
-  deleteCustomer(id: number): void {
-    this.customerService.deleteCustomer(id).subscribe(() => {
+  resetForm(): void {
+    this.newCustomer = { customerId: '', companyName: '', companySize: 1 };
+  }
+
+  startEditing(customerId: string): void {
+    this.editingCustomerId = customerId;
+  }
+
+  saveEdit(customer: Customer): void {
+    this.customerService.updateCustomer(customer.customerId, customer).subscribe(() => {
+      this.editingCustomerId = null;
       this.loadCustomers();
     });
   }
 
-  // Preencher o formulário para edição
-  editCustomer(customer: Customer): void {
-    this.newCustomer = { ...customer };
+  confirmDelete(customerId: string): void {
+    this.customerToDelete = customerId;
+    this.showDeleteModal = true;
   }
 
-  // Resetar o formulário
-  resetForm(): void {
-    this.newCustomer = { id: 0, companyName: '', companySize: 1 };
+  deleteCustomer(): void {
+    if (this.customerToDelete) {
+      this.customerService.deleteCustomer(this.customerToDelete).subscribe(() => {
+        this.showDeleteModal = false;
+        this.customerToDelete = null;
+        this.loadCustomers();
+      });
+    }
+  }
+
+  closeModal(): void {
+    this.showDeleteModal = false;
+    this.customerToDelete = null;
   }
 }
+
+
