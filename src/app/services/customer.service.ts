@@ -8,6 +8,7 @@ import { Customer } from '../models/customer.model';
 })
 export class CustomerService {
   private apiUrl = 'http://localhost:5000/api/Customers';
+
   constructor(private http: HttpClient) {}
 
   getCustomers(): Observable<Customer[]> {
@@ -18,11 +19,12 @@ export class CustomerService {
     return this.http.post<Customer>(this.apiUrl, customer);
   }
 
+  deleteCustomer(customerId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${customerId}`);
+  }
+
   updateCustomer(customerId: string, customer: Customer): Observable<Customer> {
     return this.http.put<Customer>(`${this.apiUrl}/${customerId}`, customer);
   }
 
-  deleteCustomer(customerId: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${customerId}`);
-  }
 }

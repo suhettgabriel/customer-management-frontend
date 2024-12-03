@@ -1,82 +1,52 @@
-import { Component, OnInit } from '@angular/core';
-import { CustomerService } from '../../services/customer.service';
-import { Customer } from '../../models/customer.model';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Customer } from 'src/app/models/customer.model';
+import { CustomerService } from 'src/app/services/customer.service';
 
 @Component({
   selector: 'app-customer-list',
   templateUrl: './customer-list.component.html',
   styleUrls: ['./customer-list.component.scss'],
 })
-
-export class CustomerListComponent implements OnInit {
-  customers: Customer[] = [];
-  newCustomer: Customer = { customerId: '', companyName: '', companySize: 1 };
-  editingCustomerId: string | null = null;
-  showDeleteModal: boolean = false;
-  customerToDelete: string | null = null;
+export class CustomerListComponent {
+  @Input() customers: Customer[] = [];
+  @Output() customerDeleted = new EventEmitter<string>();
+  @Output() customerEdited = new EventEmitter<Customer>();
 
   constructor(private customerService: CustomerService) {}
 
-  ngOnInit(): void {
-    this.loadCustomers();
-  }
+  deleteCustomer(customerId: string): void {
+    console.log('Attempting to delete customer with ID:', customerId); // Debug: Verifique o ID aqui
 
-  loadCustomers(): void {
-    this.customerService.getCustomers().subscribe((data) => {
-      this.customers = data;
-    });
-  }
-
-  saveCustomer(): void {
-    if (this.newCustomer.customerId) {
-      this.customerService
-        .updateCustomer(this.newCustomer.customerId, this.newCustomer)
-        .subscribe(() => {
-          this.loadCustomers();
-          this.resetForm();
-        });
+    if (customerId && customerId.trim() !== '') {
+      this.customerService.deleteCustomer(customerId).subscribe(
+        () => {
+          this.customerDeleted.emit(customerId); // Emite o evento de exclusão
+        },
+        (error) => {
+          console.error('Error deleting customer:', error);
+        }
+      );
     } else {
-      this.customerService.addCustomer(this.newCustomer).subscribe(() => {
-        this.loadCustomers();
-        this.resetForm();
-      });
+      console.error('Invalid customerId');
     }
   }
 
-  resetForm(): void {
-    this.newCustomer = { customerId: '', companyName: '', companySize: 1 };
-  }
+  updateCustomer(customerId: string, updatedCustomer: Customer): void {
+    console.log('Attempting to update customer with ID:', customerId);
 
-  startEditing(customerId: string): void {
-    this.editingCustomerId = customerId;
-  }
-
-  saveEdit(customer: Customer): void {
-    this.customerService.updateCustomer(customer.customerId, customer).subscribe(() => {
-      this.editingCustomerId = null;
-      this.loadCustomers();
-    });
-  }
-
-  confirmDelete(customerId: string): void {
-    this.customerToDelete = customerId;
-    this.showDeleteModal = true;
-  }
-
-  deleteCustomer(): void {
-    if (this.customerToDelete) {
-      this.customerService.deleteCustomer(this.customerToDelete).subscribe(() => {
-        this.showDeleteModal = false;
-        this.customerToDelete = null;
-        this.loadCustomers();
+    if (customerId && customerId.trim() !== '') {
+      this.customerService.updateCustomer(customerId, updatedCustomer).subscribe(() => {
+        console.log('Customer updated successfully');
+      }, error => {
+        console.error('Error updating customer:', error);
       });
+    } else {
+      console.error('Invalid customerId');
     }
   }
 
-  closeModal(): void {
-    this.showDeleteModal = false;
-    this.customerToDelete = null;
+  editCustomer(customer: Customer): void {
+    console.log('Editing customer:', customer);  // Verificando se o cliente está sendo passado corretamente
+    this.customerEdited.emit(customer);
   }
 }
-
-

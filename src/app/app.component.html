@@ -1,4 +1,18 @@
 <div class="container">
   <h1>Gestão de Clientes</h1>
-  <app-customer-list></app-customer-list>
+
+  <!-- Formulário de cadastro de cliente -->
+  <app-customer-form
+    (customerAdded)="handleCustomerAdded($event)"
+    [editingCustomer]="editingCustomer"
+    (customerUpdated)="saveCustomer()"
+    (cancelEdit)="cancelEdit()">
+  </app-customer-form>
+
+  <!-- Tabela de clientes -->
+  <app-customer-list
+    [customers]="customers"
+    (customerDeleted)="onCustomerDeleted($event)"
+    (customerEdited)="editCustomer($event)">
+  </app-customer-list>
 </div>
