@@ -1,9 +1,9 @@
-<table class="table">
+<table>
   <thead>
     <tr>
       <th>Company Name</th>
       <th>Company Size</th>
-      <th>Ações</th>
+      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -11,8 +11,8 @@
       <td>{{ customer.companyName }}</td>
       <td>{{ customer.companySize }}</td>
       <td>
-        <button (click)="editCustomer(customer)">Editar</button>
-        <button (click)="deleteCustomer(customer.customerId)">Excluir</button>
+        <button (click)="editCustomer(customer)">Edit</button>
+        <button (click)="deleteCustomer(customer.customerId)">Delete</button>
       </td>
     </tr>
   </tbody>

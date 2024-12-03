@@ -1,5 +1,3 @@
-/* Estilos para o formulário de cadastro de cliente */
-
 form {
   display: flex;
   flex-direction: column;
@@ -17,7 +15,7 @@ label {
   margin-bottom: 5px;
 }
 
-input[type="text"], input[type="number"] {
+input, select {
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc;

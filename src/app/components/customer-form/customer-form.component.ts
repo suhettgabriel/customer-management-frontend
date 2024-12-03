@@ -1,64 +1,47 @@
-import { Component, EventEmitter, Output, Input } from '@angular/core';
-import { CustomerService } from 'src/app/services/customer.service';
-import { Customer } from 'src/app/models/customer.model';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Customer } from '../../models/customer.model';
 
 @Component({
   selector: 'app-customer-form',
   templateUrl: './customer-form.component.html',
-  styleUrls: ['./customer-form.component.scss'],
+  styleUrls: ['./customer-form.component.scss']
 })
 export class CustomerFormComponent {
-  @Output() customerAdded = new EventEmitter<Customer>();
-  @Output() customerUpdated = new EventEmitter<void>();
-  @Output() cancelEdit = new EventEmitter<void>();
   @Input() editingCustomer: Customer | null = null;
+  @Output() customerAdded = new EventEmitter<Customer>();
+  @Output() customerUpdated = new EventEmitter<Customer>();
+  @Output() cancelEdit = new EventEmitter<void>();
 
-  customer: Customer = {
-    customerId: '',
-    companyName: '',
-    companySize: 0,
-  };
+  customer: Customer = { customerId: '', companyName: '', companySize: '' };
+  companySizes = [
+    { label: 'Small', value: 'small' },
+    { label: 'Medium', value: 'medium' },
+    { label: 'Large', value: 'large' }
+  ];
 
-  // Injeção do CustomerService no construtor
-  constructor(private customerService: CustomerService) {}
-
-  ngOnChanges(): void {
+  ngOnChanges() {
     if (this.editingCustomer) {
-      // Certifique-se de que o customerId seja copiado corretamente para o formulário
       this.customer = { ...this.editingCustomer };
-    }
-  }
-
-  // Método de adicionar cliente
-  addCustomer(): void {
-    this.customerService.addCustomer(this.customer).subscribe((newCustomer: Customer) => {
-      this.customerAdded.emit(newCustomer); // Emitir novo cliente
-      this.resetForm();
-    });
-  }
-
-  // Método para salvar a edição
-  saveCustomer(): void {
-    if (this.customer.customerId) {
-      this.customerService.updateCustomer(this.customer.customerId, this.customer).subscribe(() => {
-        this.customerUpdated.emit();
-        this.resetForm();
-      }, error => {
-        console.error('Error updating customer:', error);
-      });
     } else {
-      console.error('Invalid customer ID for update');
+      this.resetForm();
     }
   }
 
-  // Método para cancelar edição
-  cancelEditing(): void {
-    this.cancelEdit.emit();
+  saveCustomer() {
+    if (this.editingCustomer) {
+      this.customerUpdated.emit(this.customer);
+    } else {
+      this.customerAdded.emit(this.customer);
+    }
     this.resetForm();
   }
 
-  // Limpar o formulário
-  private resetForm(): void {
-    this.customer = { customerId: '', companyName: '', companySize: 0 };
+  cancelEditing() {
+    this.resetForm();
+    this.cancelEdit.emit();
+  }
+
+  resetForm() {
+    this.customer = { customerId: '', companyName: '', companySize: '' };
   }
 }

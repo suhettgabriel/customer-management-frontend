@@ -1,24 +1,16 @@
-<form (ngSubmit)="editingCustomer ? saveCustomer() : addCustomer()">
+<form (ngSubmit)="saveCustomer()">
   <div>
-    <label for="companyName">Company Name:</label>
-    <input
-      type="text"
-      id="companyName"
-      [(ngModel)]="customer.companyName"
-      name="companyName"
-      required
-    />
+    <label for="companyName">Company Name</label>
+    <input id="companyName" [(ngModel)]="customer.companyName" name="companyName" required />
   </div>
+
   <div>
-    <label for="companySize">Company Size:</label>
-    <input
-      type="number"
-      id="companySize"
-      [(ngModel)]="customer.companySize"
-      name="companySize"
-      required
-    />
+    <label for="companySize">Company Size</label>
+    <select id="companySize" [(ngModel)]="customer.companySize" name="companySize" required>
+      <option *ngFor="let size of companySizes" [value]="size.value">{{ size.label }}</option>
+    </select>
   </div>
-  <button type="submit">{{ editingCustomer ? 'Salvar Edição' : 'Adicionar Cliente' }}</button>
-  <button type="button" (click)="cancelEditing()">Cancelar</button>
+
+  <button type="submit">Save</button>
+  <button type="button" (click)="cancelEditing()">Cancel</button>
 </form>
